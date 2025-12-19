@@ -1,0 +1,22 @@
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace IDMAX_FrameWork
+{
+    public sealed class MaterialDivider : Control, IMaterialControl
+    {
+        [Browsable(false)]
+        public int Depth { get; set; }
+        [Browsable(false)]
+        public MaterialSkinManager SkinManager => MaterialSkinManager.Instance;
+        [Browsable(false)]
+        public MouseActiveState MouseState { get; set; }
+
+        public MaterialDivider()
+        {
+            SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+            Height = 1;
+            BackColor = SkinManager.GetDividersColor();
+        }
+    }
+}
