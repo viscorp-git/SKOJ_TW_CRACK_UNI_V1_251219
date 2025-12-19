@@ -3772,12 +3772,44 @@ namespace SKON_TabWelldingInspection
 
         private void btnCaWbSave_Click(object sender, EventArgs e)
         {
-            SetCameraWB(CAM_CATHODE, tbxCaWbR.Text, tbxCaWbG.Text, tbxCaWbB.Text);
+            try
+            {
+                int saveR = int.Parse(tbxCaWbB.Text);
+                int saveG = int.Parse(tbxCaWbG.Text);
+                int saveB = int.Parse(tbxCaWbB.Text);
+
+                SetCameraWB(CAM_CATHODE, tbxCaWbR.Text, tbxCaWbG.Text, tbxCaWbB.Text);
+
+                mLog.WriteLog("TEST", $"White Balance(Ca) saved : R={saveR}, G={saveG}, B={saveB}");
+
+                ResetDirty();
+                MessageBox.Show("White Balance(Ca) Saved.", "Save");
+            }
+            catch (System.Exception ex)
+            {
+                mLog.WriteLog("CAM", $"Camera WB Setup Error : {ex.Message}");
+            }
         }
 
         private void btnAnWbSave_Click(object sender, EventArgs e)
         {
-            SetCameraWB(CAM_ANODE, tbxAnWbR.Text, tbxAnWbG.Text, tbxAnWbB.Text);
+            try
+            {
+                int saveR = int.Parse(tbxAnWbB.Text);
+                int saveG = int.Parse(tbxAnWbG.Text);
+                int saveB = int.Parse(tbxAnWbB.Text);
+
+                SetCameraWB(CAM_ANODE, tbxAnWbR.Text, tbxAnWbG.Text, tbxAnWbB.Text);
+
+                mLog.WriteLog("TEST", $"White Balance(An) saved : R={saveR}, G={saveG}, B={saveB}");
+
+                ResetDirty();
+                MessageBox.Show("White Balance(An) Saved.", "Save");
+            }
+            catch (System.Exception ex)
+            {
+                mLog.WriteLog("CAM", $"Camera WB Setup Error : {ex.Message}");
+            }
         }
 
         private void SetCameraWB(int camIdx, string valR, string valG, string valB)
@@ -3945,6 +3977,13 @@ namespace SKON_TabWelldingInspection
             // Exp gain저장. ini에도 저장
             try
             {
+                // 251219 이전 저장 값 읽기
+                int oldExpCa = int.Parse(ini.ReadIniValue("CameraSetup", "Cathode_Exposure", "1000"));
+                int oldGainCa = int.Parse(ini.ReadIniValue("CameraSetup", "Cathode_Gain", "0"));
+                int oldExpAn = int.Parse(ini.ReadIniValue("CameraSetup", "Anode_Exposure", "1000"));
+                int oldGainAn = int.Parse(ini.ReadIniValue("CameraSetup", "Anode_Gain", "0"));
+
+                // 입력값 보정
                 if (int.Parse(tbxExpCa.Text) < 1) tbxExpCa.Text = "1";
                 if (int.Parse(tbxGainCa.Text) < 1) tbxGainCa.Text = "0";
                 if (int.Parse(tbxExpCa.Text) > 16777215) tbxExpCa.Text = "16777215";
@@ -3953,32 +3992,56 @@ namespace SKON_TabWelldingInspection
                 if (int.Parse(tbxGainAn.Text) < 1) tbxGainAn.Text = "0";
                 if (int.Parse(tbxExpAn.Text) > 16777215) tbxExpAn.Text = "16777215";
                 if (int.Parse(tbxGainAn.Text) > 208) tbxGainAn.Text = "208";
+
+                int newExpCa = int.Parse(tbxExpCa.Text);
+                int newGainCa = int.Parse(tbxGainCa.Text);
+                int newExpAn = int.Parse(tbxExpAn.Text);
+                int newGainAn = int.Parse(tbxGainAn.Text);
+
+                // 251219 변경 로그
+                if (oldExpCa != newExpCa)
+                {
+                    mLog.WriteLog("CAM", $"Cathode Exposure Changed : {oldExpCa} -> {newExpCa}");
+                }
+                if (oldGainCa != newGainCa)
+                {
+                    mLog.WriteLog("CAM", $"Cathode Gain Changed : {oldGainCa} -> {newGainCa}");
+                }
+                if (oldExpAn != newExpAn)
+                {
+                    mLog.WriteLog("CAM", $"Anode Exposure Changed : {oldExpAn} -> {newExpAn}");
+                }
+                if (oldGainAn != newGainAn)
+                {
+                    mLog.WriteLog("CAM", $"Anode Gain Changed : {oldGainAn} -> {newGainAn}");
+                }
+
+                SetCameraExposureGain(CAM_CATHODE, tbxExpCa.Text, tbxGainCa.Text);
+                SetCameraExposureGain(CAM_ANODE, tbxExpAn.Text, tbxGainAn.Text);
+
+                // 251219 ini 저장(갱신)
+                ini.WriteIniValue("CameraSetup", "Cathode_Exposure", tbxExpCa.Text);
+                ini.WriteIniValue("CameraSetup", "Cathode_Gain", tbxGainCa.Text);
+                ini.WriteIniValue("CameraSetup", "Anode_Exposure", tbxExpAn.Text);
+                ini.WriteIniValue("CameraSetup", "Anode_Gain", tbxGainAn.Text);
+
+                ResetDirty();
+                MessageBox.Show("Exposure/Gain Saved.", "Save");
             }
             catch (System.Exception ex)
             {
                 MessageBox.Show("Error : " + ex.ToString());
-                mLog.WriteLog("System", $"ExpGain Error : {ex.Message}");
+                mLog.WriteLog("System", $"Exposure/Gain Save Error : {ex.Message}");
             }
-
-            SetCameraExposureGain(CAM_CATHODE, tbxExpCa.Text, tbxGainCa.Text);
-            SetCameraExposureGain(CAM_ANODE, tbxExpAn.Text, tbxGainAn.Text);
         }
 
         private void SetCameraExposureGain(int camIdx, string expValue, string gainValue)
         {
-            try
-            {
-                mCamera.ExposureValue(camIdx, expValue);
-                mCamera.GainValue(camIdx, gainValue);
+            mCamera.ExposureValue(camIdx, expValue);
+            mCamera.GainValue(camIdx, gainValue);
 
-                ini.WriteIniValue("CameraSetup", $"{CamName(camIdx)}_Exposure", expValue);
-                ini.WriteIniValue("CameraSetup", $"{CamName(camIdx)}_Gain", gainValue);
-            }
-            catch (System.Exception ex)
-            {
-                MessageBox.Show("Error : " + ex.ToString());
-                mLog.WriteLog("System", $"Camera Setup Error : {ex.Message}");
-            }
+            ini.WriteIniValue("CameraSetup", $"{CamName(camIdx)}_Exposure", expValue);
+            ini.WriteIniValue("CameraSetup", $"{CamName(camIdx)}_Gain", gainValue);
         }
 
         private void lblBrightCa_Click(object sender, EventArgs e)
