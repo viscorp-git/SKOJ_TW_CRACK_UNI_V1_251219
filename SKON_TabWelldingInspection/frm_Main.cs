@@ -4646,6 +4646,12 @@ namespace SKON_TabWelldingInspection
             string msg = $"Old Model: {mWorkSpacePath}\nNew Model: {lbl_WorkspacePath.Text} \n\nWould you like to proceed with the model change process?";
             DialogResult result = MessageBox.Show(msg, "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
 
+            // 251219 result 값에 따라 처리
+            if (result == DialogResult.Cancel)
+                return;
+
+            mLog.WriteLog("TEST", $"Model chage requested by user. Old Model: {mWorkSpacePath}, New Model: {lbl_WorkspacePath.Text}");
+
             ModelChangeProcess(Path.GetDirectoryName(lbl_WorkspacePath.Text), Path.GetFileName(lbl_WorkspacePath.Text));
         }
 
