@@ -2591,8 +2591,6 @@
             this.tableLayoutPanel5.Controls.Add(this.label53, 7, 3);
             this.tableLayoutPanel5.Controls.Add(this.txt_CathodeVision_IP, 8, 0);
             this.tableLayoutPanel5.Controls.Add(this.txt_AnodeVision_IP, 8, 1);
-            this.tableLayoutPanel5.Controls.Add(this.btn_Anode_Connect, 10, 0);
-            this.tableLayoutPanel5.Controls.Add(this.btn_Cathode_Connect, 10, 1);
             this.tableLayoutPanel5.Controls.Add(this.tableLayoutPanel1, 8, 2);
             this.tableLayoutPanel5.Controls.Add(this.tableLayoutPanel9, 8, 3);
             this.tableLayoutPanel5.Controls.Add(this.label54, 7, 5);
@@ -2662,6 +2660,8 @@
             this.tableLayoutPanel5.Controls.Add(this.label18, 0, 24);
             this.tableLayoutPanel5.Controls.Add(this.lbl_VproSavePath, 1, 24);
             this.tableLayoutPanel5.Controls.Add(this.btn_VproSavePath, 4, 24);
+            this.tableLayoutPanel5.Controls.Add(this.btn_Anode_Connect, 10, 1);
+            this.tableLayoutPanel5.Controls.Add(this.btn_Cathode_Connect, 10, 0);
             this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel5.Location = new System.Drawing.Point(1, 23);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
@@ -2992,7 +2992,7 @@
             this.btn_Anode_Connect.Enabled = false;
             this.btn_Anode_Connect.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold);
             this.btn_Anode_Connect.ForeColor = System.Drawing.Color.Black;
-            this.btn_Anode_Connect.Location = new System.Drawing.Point(1293, 3);
+            this.btn_Anode_Connect.Location = new System.Drawing.Point(1293, 33);
             this.btn_Anode_Connect.Name = "btn_Anode_Connect";
             this.btn_Anode_Connect.Size = new System.Drawing.Size(224, 24);
             this.btn_Anode_Connect.TabIndex = 109;
@@ -3006,7 +3006,7 @@
             this.btn_Cathode_Connect.Enabled = false;
             this.btn_Cathode_Connect.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold);
             this.btn_Cathode_Connect.ForeColor = System.Drawing.Color.Black;
-            this.btn_Cathode_Connect.Location = new System.Drawing.Point(1293, 33);
+            this.btn_Cathode_Connect.Location = new System.Drawing.Point(1293, 3);
             this.btn_Cathode_Connect.Name = "btn_Cathode_Connect";
             this.btn_Cathode_Connect.Size = new System.Drawing.Size(224, 24);
             this.btn_Cathode_Connect.TabIndex = 107;
