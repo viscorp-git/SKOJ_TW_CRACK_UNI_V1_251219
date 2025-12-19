@@ -31,7 +31,7 @@ using TextBox = System.Windows.Forms.TextBox;
 
 namespace SKON_TabWelldingInspection
 {
-    public partial class frm_Main : IDMAX_FrameWork.MaterialForm
+    public partial class frm_Main : BaseConfigForm
     {
         #region Class
 
@@ -54,6 +54,8 @@ namespace SKON_TabWelldingInspection
 
         private CogToolBlock CathodeToolBlock = null;
         private CogToolBlock AnodeToolBlock = null;
+
+        public cls_Log Log => mLog;
         #endregion Class
 
         #region Variable_Camera
@@ -340,7 +342,10 @@ namespace SKON_TabWelldingInspection
                 // 최초 VPDL 로딩 해줘야만 처음 로딩시, 로딩 이슈를 해결할 수 있음.
                 VPDL_initailize();
             }
-            catch (System.Exception ex) { MessageBox.Show(ex.Message); }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show($"Form Loading Error: {ex.Message}");
+            }
         }
 
         private void initMain()
@@ -438,7 +443,6 @@ namespace SKON_TabWelldingInspection
 
                 mCamera?.Disconnect(CAM_CATHODE);
                 mCamera?.Disconnect(CAM_ANODE);
-
 
                 mLog.WriteLogDirect("FormClosing", "Waiting for threads to terminate...");
 
@@ -596,85 +600,104 @@ namespace SKON_TabWelldingInspection
 
         private void btn_Maintenance_Click(object sender, EventArgs e)
         {
-            // 메모리 저장
-            mProcess = tbxSetupProcess.Text;
-            mLineNo = tbxLineNo.Text;
-            mPosition = rdoSetupLineT.Checked ? "TOP" : "BOTTOM";
-            mImageSaveDir = lbl_LocalImageSavePath.Text;
-            mImageSaveRatio = int.Parse(tbxImageSaveRatio.Text);
-            mVissSaveDir = lbl_NasSavePath.Text;
-            if (!string.IsNullOrEmpty(cmbSavePathFormatVISS.Text)) mVissSaveDirFormat = cmbSavePathFormatVISS.Text.Substring(0, 2);
-            if (!string.IsNullOrEmpty(cmbIMGSaveErrFormat.Text)) mImageSaveErrFormat = cmbIMGSaveErrFormat.Text.Substring(0, 2);
+            // 저장 여부 확인
+            DialogResult result = MessageBox.Show(
+                "저장하시겠습니까?",
+                "Confirm",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
 
-            mWorkSpacePath = lbl_WorkspacePath.Text;
-            m_VPDL_Bypass = rdoVpdlBypassTrue.Checked ? true : false;
-            m_VPDL_Locate = rdoVpdlLocateTrue.Checked ? true : false;
+            if (result != DialogResult.Yes)
+                return;
 
-            mLocateLocalSaveDir = lbl_LocateLocalSavePath.Text;
-            mLocateVISSSaveDir = lbl_LocateVISSSavePath.Text;
-            mHeatmapLocalSaveDir = lbl_HeatmapLocalSavePath.Text;
-            mHeatmapVISSSaveDir = lbl_HeatmapVISSSavePath.Text;
-            mJsonSaveDir = lbl_JsonSavePath.Text;
-            mVPROLocalSaveDir = lbl_VproSavePath.Text;
+            try
+            {
+                // 메모리 저장
+                mProcess = tbxSetupProcess.Text;
+                mLineNo = tbxLineNo.Text;
+                mPosition = rdoSetupLineT.Checked ? "TOP" : "BOTTOM";
+                mImageSaveDir = lbl_LocalImageSavePath.Text;
+                mImageSaveRatio = int.Parse(tbxImageSaveRatio.Text);
+                mVissSaveDir = lbl_NasSavePath.Text;
+                if (!string.IsNullOrEmpty(cmbSavePathFormatVISS.Text)) mVissSaveDirFormat = cmbSavePathFormatVISS.Text.Substring(0, 2);
+                if (!string.IsNullOrEmpty(cmbIMGSaveErrFormat.Text)) mImageSaveErrFormat = cmbIMGSaveErrFormat.Text.Substring(0, 2);
 
-            mCathode_Vision_IP = txt_CathodeVision_IP.Text.Trim();
-            mAnode_Vision_IP = txt_AnodeVision_IP.Text.Trim();
-            mCathode_Reverse = rdoCamRevCaTrue.Checked ? true : false;
-            mAnode_Reverse = rdoCamRevAnTrue.Checked ? true : false;
-            mLightControllerPort = cmbLightControllerPort.Text;
-            mLightControllerMaker = cmbLightControllerMaker.Text;
-            m_IO_Num = (int)num_IO_Index.Value;
+                mWorkSpacePath = lbl_WorkspacePath.Text;
+                m_VPDL_Bypass = rdoVpdlBypassTrue.Checked ? true : false;
+                m_VPDL_Locate = rdoVpdlLocateTrue.Checked ? true : false;
 
-            m_PLC_Bypass = rdoPlcBypassTrue.Checked ? true : false;
-            mEdgestatusInterval = int.Parse(tbxEdgeStatusInterval.Text);
-            mModelChangeTimout = int.Parse(tbxModelChangeTimeout.Text);
-            m_VPRO_Bypass = rdoVproBypassTrue.Checked ? true : false;
-            m_VPRO_Use = rdoVproUseTrue.Checked ? true : false;
-            cls_GlobalValue.ModelPath = lbl_VproModelPath.Text;
+                mLocateLocalSaveDir = lbl_LocateLocalSavePath.Text;
+                mLocateVISSSaveDir = lbl_LocateVISSSavePath.Text;
+                mHeatmapLocalSaveDir = lbl_HeatmapLocalSavePath.Text;
+                mHeatmapVISSSaveDir = lbl_HeatmapVISSSavePath.Text;
+                mJsonSaveDir = lbl_JsonSavePath.Text;
+                mVPROLocalSaveDir = lbl_VproSavePath.Text;
 
-            // ini 저장
-            ini.WriteIniValue("Maintenance", "Process", mProcess);
-            ini.WriteIniValue("Maintenance", "LineNo", mLineNo);
-            ini.WriteIniValue("Maintenance", "Position", mPosition);
-            ini.WriteIniValue("Maintenance", "SavePath", mImageSaveDir);
-            ini.WriteIniValue("Maintenance", "ImageSaveRatio", mImageSaveRatio.ToString());
-            // 로컬저장용량제한 옵션
-            ini.WriteIniValue("Maintenance", "NasSavePath", mVissSaveDir);
-            ini.WriteIniValue("Maintenance", "VissSaveDirFormat", mVissSaveDirFormat);
+                mCathode_Vision_IP = txt_CathodeVision_IP.Text.Trim();
+                mAnode_Vision_IP = txt_AnodeVision_IP.Text.Trim();
+                mCathode_Reverse = rdoCamRevCaTrue.Checked ? true : false;
+                mAnode_Reverse = rdoCamRevAnTrue.Checked ? true : false;
+                mLightControllerPort = cmbLightControllerPort.Text;
+                mLightControllerMaker = cmbLightControllerMaker.Text;
+                m_IO_Num = (int)num_IO_Index.Value;
 
-            ini.WriteIniValue("Maintenance", "ImageSaveErrFormat", mImageSaveErrFormat);
+                m_PLC_Bypass = rdoPlcBypassTrue.Checked ? true : false;
+                mEdgestatusInterval = int.Parse(tbxEdgeStatusInterval.Text);
+                mModelChangeTimout = int.Parse(tbxModelChangeTimeout.Text);
+                m_VPRO_Bypass = rdoVproBypassTrue.Checked ? true : false;
+                m_VPRO_Use = rdoVproUseTrue.Checked ? true : false;
+                cls_GlobalValue.ModelPath = lbl_VproModelPath.Text;
 
-            ini.WriteIniValue("Maintenance", "WorkspaceSavePath", mWorkSpacePath);
-            ini.WriteIniValue("Maintenance", "VPDL_Bypass", m_VPDL_Bypass.ToString());
-            ini.WriteIniValue("Maintenance", "VPDL_Locate", m_VPDL_Locate.ToString());
+                // ini 저장
+                ini.WriteIniValue("Maintenance", "Process", mProcess);
+                ini.WriteIniValue("Maintenance", "LineNo", mLineNo);
+                ini.WriteIniValue("Maintenance", "Position", mPosition);
+                ini.WriteIniValue("Maintenance", "SavePath", mImageSaveDir);
+                ini.WriteIniValue("Maintenance", "ImageSaveRatio", mImageSaveRatio.ToString());
+                // 로컬저장용량제한 옵션
+                ini.WriteIniValue("Maintenance", "NasSavePath", mVissSaveDir);
+                ini.WriteIniValue("Maintenance", "VissSaveDirFormat", mVissSaveDirFormat);
 
-            ini.WriteIniValue("Maintenance", "LocateLocalSavePath", mLocateLocalSaveDir);
-            ini.WriteIniValue("Maintenance", "LocateVISSSavePath", mLocateVISSSaveDir);
-            ini.WriteIniValue("Maintenance", "HeatmapLocalSavePath", mHeatmapLocalSaveDir);
-            ini.WriteIniValue("Maintenance", "HeatmapVISSSavePath", mHeatmapVISSSaveDir);
+                ini.WriteIniValue("Maintenance", "ImageSaveErrFormat", mImageSaveErrFormat);
 
-            ini.WriteIniValue("Maintenance", "JsonSavePath", mJsonSaveDir);
-            ini.WriteIniValue("Maintenance", "VproLocalSavePath", mVPROLocalSaveDir);
+                ini.WriteIniValue("Maintenance", "WorkspaceSavePath", mWorkSpacePath);
+                ini.WriteIniValue("Maintenance", "VPDL_Bypass", m_VPDL_Bypass.ToString());
+                ini.WriteIniValue("Maintenance", "VPDL_Locate", m_VPDL_Locate.ToString());
 
-            ini.WriteIniValue("Camera", "Cathode_Vision_IP", mCathode_Vision_IP);
-            ini.WriteIniValue("Camera", "Anode_Vision_IP", mAnode_Vision_IP);
-            ini.WriteIniValue("CameraSetup", "Cathode_Reverse", mCathode_Reverse.ToString());
-            ini.WriteIniValue("CameraSetup", "Anode_Reverse", mAnode_Reverse.ToString());
-            ini.WriteIniValue("Camera", "LightControllerPort", mLightControllerPort.ToString());
-            ini.WriteIniValue("Camera", "LightControllerMaker", mLightControllerMaker.ToString());
+                ini.WriteIniValue("Maintenance", "LocateLocalSavePath", mLocateLocalSaveDir);
+                ini.WriteIniValue("Maintenance", "LocateVISSSavePath", mLocateVISSSaveDir);
+                ini.WriteIniValue("Maintenance", "HeatmapLocalSavePath", mHeatmapLocalSaveDir);
+                ini.WriteIniValue("Maintenance", "HeatmapVISSSavePath", mHeatmapVISSSaveDir);
 
-            ini.WriteIniValue("Maintenance", "IOIndex", Convert.ToString((int)m_IO_Num));
+                ini.WriteIniValue("Maintenance", "JsonSavePath", mJsonSaveDir);
+                ini.WriteIniValue("Maintenance", "VproLocalSavePath", mVPROLocalSaveDir);
 
-            ini.WriteIniValue("PLC", "PLC_Bypass", m_PLC_Bypass.ToString());
+                ini.WriteIniValue("Camera", "Cathode_Vision_IP", mCathode_Vision_IP);
+                ini.WriteIniValue("Camera", "Anode_Vision_IP", mAnode_Vision_IP);
+                ini.WriteIniValue("CameraSetup", "Cathode_Reverse", mCathode_Reverse.ToString());
+                ini.WriteIniValue("CameraSetup", "Anode_Reverse", mAnode_Reverse.ToString());
+                ini.WriteIniValue("Camera", "LightControllerPort", mLightControllerPort.ToString());
+                ini.WriteIniValue("Camera", "LightControllerMaker", mLightControllerMaker.ToString());
 
-            ini.WriteIniValue("Maintenance", "EdgeStatusInterval", mEdgestatusInterval.ToString());
-            ini.WriteIniValue("Maintenance", "ModelChangeTimout", mModelChangeTimout.ToString());
+                ini.WriteIniValue("Maintenance", "IOIndex", Convert.ToString((int)m_IO_Num));
 
-            ini.WriteIniValue("VPRO", "VPRO_Bypass", m_VPRO_Bypass.ToString());
-            ini.WriteIniValue("VPRO", "VPRO_Use", m_VPRO_Use.ToString());
-            ini.WriteIniValue("VPRO", "ModelSavePath", cls_GlobalValue.ModelPath);
+                ini.WriteIniValue("PLC", "PLC_Bypass", m_PLC_Bypass.ToString());
 
-            MessageBox.Show("저장되었습니다.", "Save");
+                ini.WriteIniValue("Maintenance", "EdgeStatusInterval", mEdgestatusInterval.ToString());
+                ini.WriteIniValue("Maintenance", "ModelChangeTimout", mModelChangeTimout.ToString());
+
+                ini.WriteIniValue("VPRO", "VPRO_Bypass", m_VPRO_Bypass.ToString());
+                ini.WriteIniValue("VPRO", "VPRO_Use", m_VPRO_Use.ToString());
+                ini.WriteIniValue("VPRO", "ModelSavePath", cls_GlobalValue.ModelPath);
+
+                ResetDirty();
+                MessageBox.Show("저장되었습니다.", "Save");
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show($"저장 중 오류가 발생했습니다: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         #endregion Initialize
@@ -723,7 +746,7 @@ namespace SKON_TabWelldingInspection
             }
             catch (System.Exception ex)
             {
-                mLog.WriteLog("system", $"error : {ex.Message}");
+                mLog.WriteLog("system", $"Display View Setup Error : {ex.Message}");
             }
 
             cogDisplayStatusBarV21.Display = displayCathode.Display;
@@ -1348,61 +1371,86 @@ namespace SKON_TabWelldingInspection
 
         private void btn_PLCInfo_Save_Click(object sender, EventArgs e)
         {
-            m_PLC_IP = tbx_PLC_IP.Text.Trim();
-            m_PLC_Port = Convert.ToInt32(tbx_PLC_Port.Text.Trim());
+            // 저장 여부 확인
+            DialogResult result = MessageBox.Show(
+                "저장하시겠습니까?",
+                "Confirm",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
 
-            mPlc_Read_CELLID_CA = tbx_Cell_id_CA.Text.Trim();
-            mPlc_Read_CELLID_AN = tbx_Cell_id_AN.Text.Trim();
-            mPlc_Read_Carrier_ID = tbx_Carrier_id.Text.Trim();
-            mPlc_Read_Stack_ID = tbx_Stack_id.Text.Trim();
-            mPlc_Read_Model_No = tbx_Model_No.Text.Trim();
-            mPlc_Read_Change_Model_PLC = tbx_Change_Model_PLC.Text.Trim();
-            mPlc_Read_VisionIO_Reset = tbx_Vision_IO_Reset.Text.Trim();
-            mPlc_Read_Image_Save_Err_Reset = tbx_Image_Save_Error_Reset.Text.Trim();
-            mPlc_Read_Image_Detect_Err_Reset = tbx_Image_Detect_Error_Reset.Text.Trim();
+            // No 선택 시 아무 작업도 하지 않음
+            if (result != DialogResult.Yes)
+                return;
 
-            mPlc_Write_HeartBeat = tbx_HeartBeat.Text.Trim();
-            mPlc_Write_Cathode_Result = tbx_Cathode_Result.Text.Trim();
-            mPlc_Write_Anode_Result = tbx_Anode_Result.Text.Trim();
-            mPlc_Write_Cathode_Result_Code = tbx_Cathode_Result_Code.Text.Trim();
-            mPlc_Write_Anode_Result_Code = tbx_Anode_Result_Code.Text.Trim();
-            mPlc_Write_Change_Model_PC = tbx_Change_Model_PC.Text.Trim();
-            mPlc_Write_Complete_VisionIO_Reset = tbx_Complete_Vision_IO_Reset.Text.Trim();
-            mPlc_Write_Image_Save_Err = tbx_Image_Save_Error.Text.Trim();
-            mPlc_Write_Cathode_Image_Detect_Err = tbx_Cathode_Image_Detect_Error.Text.Trim();
-            mPlc_Write_Anode_Image_Detect_Err = tbx_Anode_Image_Detect_Error.Text.Trim();
-            mPlc_Write_Cathode_Cell_Id = tbx_Cathode_Write_Cell_id.Text.Trim();
-            mPlc_Write_Anode_Cell_Id = tbx_Anode_Write_Cell_id.Text.Trim();
-            mPlc_Write_Cathode_Vpro_Result = tbx_Cathode_VPRO_Result.Text.Trim();
-            mPlc_Write_Anode_Vpro_Result = tbx_Anode_VPRO_Result.Text.Trim();
+            try
+            {
+                m_PLC_IP = tbx_PLC_IP.Text.Trim();
+                m_PLC_Port = Convert.ToInt32(tbx_PLC_Port.Text.Trim());
 
-            ini.WriteIniValue("PLC", "PLC_IP", m_PLC_IP);
-            ini.WriteIniValue("PLC", "PLC_Port", Convert.ToString((int)m_PLC_Port));
+                mPlc_Read_CELLID_CA = tbx_Cell_id_CA.Text.Trim();
+                mPlc_Read_CELLID_AN = tbx_Cell_id_AN.Text.Trim();
+                mPlc_Read_Carrier_ID = tbx_Carrier_id.Text.Trim();
+                mPlc_Read_Stack_ID = tbx_Stack_id.Text.Trim();
+                mPlc_Read_Model_No = tbx_Model_No.Text.Trim();
+                mPlc_Read_Change_Model_PLC = tbx_Change_Model_PLC.Text.Trim();
+                mPlc_Read_VisionIO_Reset = tbx_Vision_IO_Reset.Text.Trim();
+                mPlc_Read_Image_Save_Err_Reset = tbx_Image_Save_Error_Reset.Text.Trim();
+                mPlc_Read_Image_Detect_Err_Reset = tbx_Image_Detect_Error_Reset.Text.Trim();
 
-            ini.WriteIniValue("PLC", "CELLID_CA", mPlc_Read_CELLID_CA);
-            ini.WriteIniValue("PLC", "CELLID_AN", mPlc_Read_CELLID_AN);
-            ini.WriteIniValue("PLC", "Carrier_id", mPlc_Read_Carrier_ID);
-            ini.WriteIniValue("PLC", "Stack_id", mPlc_Read_Stack_ID);
-            ini.WriteIniValue("PLC", "Model_No", mPlc_Read_Model_No);
-            ini.WriteIniValue("PLC", "Change_Model_PLC", mPlc_Read_Change_Model_PLC);
-            ini.WriteIniValue("PLC", "Vision_IO_Reset", mPlc_Read_VisionIO_Reset);
-            ini.WriteIniValue("PLC", "Image_Save_Error_Reset", mPlc_Read_Image_Save_Err_Reset);
-            ini.WriteIniValue("PLC", "Image_Detect_Error_Reset", mPlc_Read_Image_Detect_Err_Reset);
+                mPlc_Write_HeartBeat = tbx_HeartBeat.Text.Trim();
+                mPlc_Write_Cathode_Result = tbx_Cathode_Result.Text.Trim();
+                mPlc_Write_Anode_Result = tbx_Anode_Result.Text.Trim();
+                mPlc_Write_Cathode_Result_Code = tbx_Cathode_Result_Code.Text.Trim();
+                mPlc_Write_Anode_Result_Code = tbx_Anode_Result_Code.Text.Trim();
+                mPlc_Write_Change_Model_PC = tbx_Change_Model_PC.Text.Trim();
+                mPlc_Write_Complete_VisionIO_Reset = tbx_Complete_Vision_IO_Reset.Text.Trim();
+                mPlc_Write_Image_Save_Err = tbx_Image_Save_Error.Text.Trim();
+                mPlc_Write_Cathode_Image_Detect_Err = tbx_Cathode_Image_Detect_Error.Text.Trim();
+                mPlc_Write_Anode_Image_Detect_Err = tbx_Anode_Image_Detect_Error.Text.Trim();
+                mPlc_Write_Cathode_Cell_Id = tbx_Cathode_Write_Cell_id.Text.Trim();
+                mPlc_Write_Anode_Cell_Id = tbx_Anode_Write_Cell_id.Text.Trim();
+                mPlc_Write_Cathode_Vpro_Result = tbx_Cathode_VPRO_Result.Text.Trim();
+                mPlc_Write_Anode_Vpro_Result = tbx_Anode_VPRO_Result.Text.Trim();
 
-            ini.WriteIniValue("PLC", "HeartBeat", mPlc_Write_HeartBeat);
-            ini.WriteIniValue("PLC", "Anode_Result", mPlc_Write_Anode_Result);
-            ini.WriteIniValue("PLC", "Cathode_Result", mPlc_Write_Cathode_Result);
-            ini.WriteIniValue("PLC", "Anode_Result_Code", mPlc_Write_Anode_Result_Code);
-            ini.WriteIniValue("PLC", "Cathode_Result_Code", mPlc_Write_Cathode_Result_Code);
-            ini.WriteIniValue("PLC", "Change_Model_PC", mPlc_Write_Change_Model_PC);
-            ini.WriteIniValue("PLC", "Complete_Vision_IO_Reset", mPlc_Write_Complete_VisionIO_Reset);
-            ini.WriteIniValue("PLC", "Image_Save_Error", mPlc_Write_Image_Save_Err);
-            ini.WriteIniValue("PLC", "Cathode_Image_Detect_Error", mPlc_Write_Cathode_Image_Detect_Err);
-            ini.WriteIniValue("PLC", "Anode_Image_Detect_Error", mPlc_Write_Anode_Image_Detect_Err);
-            ini.WriteIniValue("PLC", "Write_Cathode_Cell_Id", mPlc_Write_Cathode_Cell_Id);
-            ini.WriteIniValue("PLC", "Write_Anode_Cell_Id", mPlc_Write_Anode_Cell_Id);
-            ini.WriteIniValue("PLC", "Cathode_Vpro_Result", mPlc_Write_Cathode_Vpro_Result);
-            ini.WriteIniValue("PLC", "Anode_Vpro_Result", mPlc_Write_Anode_Vpro_Result);
+                ini.WriteIniValue("PLC", "PLC_IP", m_PLC_IP);
+                ini.WriteIniValue("PLC", "PLC_Port", Convert.ToString((int)m_PLC_Port));
+
+                ini.WriteIniValue("PLC", "CELLID_CA", mPlc_Read_CELLID_CA);
+                ini.WriteIniValue("PLC", "CELLID_AN", mPlc_Read_CELLID_AN);
+                ini.WriteIniValue("PLC", "Carrier_id", mPlc_Read_Carrier_ID);
+                ini.WriteIniValue("PLC", "Stack_id", mPlc_Read_Stack_ID);
+                ini.WriteIniValue("PLC", "Model_No", mPlc_Read_Model_No);
+                ini.WriteIniValue("PLC", "Change_Model_PLC", mPlc_Read_Change_Model_PLC);
+                ini.WriteIniValue("PLC", "Vision_IO_Reset", mPlc_Read_VisionIO_Reset);
+                ini.WriteIniValue("PLC", "Image_Save_Error_Reset", mPlc_Read_Image_Save_Err_Reset);
+                ini.WriteIniValue("PLC", "Image_Detect_Error_Reset", mPlc_Read_Image_Detect_Err_Reset);
+
+                ini.WriteIniValue("PLC", "HeartBeat", mPlc_Write_HeartBeat);
+                ini.WriteIniValue("PLC", "Anode_Result", mPlc_Write_Anode_Result);
+                ini.WriteIniValue("PLC", "Cathode_Result", mPlc_Write_Cathode_Result);
+                ini.WriteIniValue("PLC", "Anode_Result_Code", mPlc_Write_Anode_Result_Code);
+                ini.WriteIniValue("PLC", "Cathode_Result_Code", mPlc_Write_Cathode_Result_Code);
+                ini.WriteIniValue("PLC", "Change_Model_PC", mPlc_Write_Change_Model_PC);
+                ini.WriteIniValue("PLC", "Complete_Vision_IO_Reset", mPlc_Write_Complete_VisionIO_Reset);
+                ini.WriteIniValue("PLC", "Image_Save_Error", mPlc_Write_Image_Save_Err);
+                ini.WriteIniValue("PLC", "Cathode_Image_Detect_Error", mPlc_Write_Cathode_Image_Detect_Err);
+                ini.WriteIniValue("PLC", "Anode_Image_Detect_Error", mPlc_Write_Anode_Image_Detect_Err);
+                ini.WriteIniValue("PLC", "Write_Cathode_Cell_Id", mPlc_Write_Cathode_Cell_Id);
+                ini.WriteIniValue("PLC", "Write_Anode_Cell_Id", mPlc_Write_Anode_Cell_Id);
+                ini.WriteIniValue("PLC", "Cathode_Vpro_Result", mPlc_Write_Cathode_Vpro_Result);
+                ini.WriteIniValue("PLC", "Anode_Vpro_Result", mPlc_Write_Anode_Vpro_Result);
+
+                ResetDirty();
+                // 저장 완료 메시지
+                MessageBox.Show("저장되었습니다.", "Save");
+            }
+            catch(System.Exception ex)
+            {
+                mLog.WriteLog("PLC", $"PLC Info Save Error : {ex.Message}");
+                MessageBox.Show("저장 중 오류가 발생했습니다.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
         }
 
         private void btn_PLC_Connect_Click(object sender, EventArgs e)
@@ -1430,7 +1478,7 @@ namespace SKON_TabWelldingInspection
             }
             catch (System.Exception ex)
             {
-                mLog.WriteLog("PLC", $"PLC Thread error : {ex.Message}");
+                mLog.WriteLog("PLC", $"PLC Thread Error : {ex.Message}");
             }
         }
 
@@ -2167,7 +2215,7 @@ namespace SKON_TabWelldingInspection
             }
             catch (System.Exception ex)
             {
-                mLog.WriteLog("CAM", $"Capture error : {ex.Message}", CamName(CamNum));
+                mLog.WriteLog("CAM", $"Capture Error : {ex.Message}", CamName(CamNum));
             }
         }
 
@@ -2914,7 +2962,7 @@ namespace SKON_TabWelldingInspection
 
             if (m_VPRO_Bypass == true)
             {
-                mLog.WriteLog("CAM", $"{runResultJson.CORNER_NAME} VPRO Result : OK (Bypass)");
+                mLog.WriteLog("VPRO", $"{runResultJson.CORNER_NAME} VPRO Result : OK (Bypass)");
             }
             else
             {
@@ -3007,7 +3055,7 @@ namespace SKON_TabWelldingInspection
             }
             catch (System.Exception ex)
             {
-                mLog.WriteLog("SYS", $"Save VPRO Image Error : {ex.Message}");
+                mLog.WriteLog("VPRO", $"Save VPRO Image Error : {ex.Message}");
             }
         }
 
@@ -3026,7 +3074,7 @@ namespace SKON_TabWelldingInspection
             }
             catch (System.Exception ex)
             {
-                mLog.WriteLog("SYS", $"Save VPRO Image Error : {ex.Message}");
+                mLog.WriteLog("VPRO", $"Save VPRO Image Error : {ex.Message}");
             }
         }
 
@@ -3068,7 +3116,7 @@ namespace SKON_TabWelldingInspection
                         if (mPLC.WriteShort(plcVproResult, (short)1) == -9999)
                         {
                             mCommunicationErr++;
-                            mLog.WriteLog("CAM", $"CommunicationError VPRO OK result: {mCommunicationErr}");
+                            mLog.WriteLog("VPRO", $"CommunicationError VPRO OK result: {mCommunicationErr}");
                             return;
                         }
                     }
@@ -3082,7 +3130,7 @@ namespace SKON_TabWelldingInspection
                             if (mPLC.WriteShort(plcVproResult, (short)2) == -9999)
                             {
                                 mCommunicationErr++;
-                                mLog.WriteLog("CAM", $"CommunicationError VPRO NG result: {mCommunicationErr}");
+                                mLog.WriteLog("VPRO", $"CommunicationError VPRO NG result: {mCommunicationErr}");
                                 return;
                             }
                         }
@@ -3094,7 +3142,7 @@ namespace SKON_TabWelldingInspection
                             if (mPLC.WriteShort(plcVproResult, (short)1) == -9999)
                             {
                                 mCommunicationErr++;
-                                mLog.WriteLog("CAM", $"CommunicationError VPRO OK result: {mCommunicationErr}");
+                                mLog.WriteLog("VPRO", $"CommunicationError VPRO OK result: {mCommunicationErr}");
                                 return;
                             }
                         }
@@ -3643,7 +3691,7 @@ namespace SKON_TabWelldingInspection
             }
             catch (System.Exception ex)
             {
-                mLog.WriteLog("System", $"error : {ex.Message}");
+                mLog.WriteLog("System", $"Guide Line Error : {ex.Message}");
             }
         }
 
@@ -3661,10 +3709,10 @@ namespace SKON_TabWelldingInspection
                     displayCathode.Display.InteractiveGraphics.Clear();
                     displayAnode.Display.InteractiveGraphics.Clear();
                 }
-                else
+                else // btnViewGuideRect.Text = "Guide Rectangle Off"
                 {
                     btnViewGuideRect.Text = "Guide Rectangle On";
-                    btnViewGuideRect.Text = "Guide Rectangle On";
+                    // btnViewGuideRect.Text = "Guide Rectangle On";
                     btnViewGuideRect.BackColor = Color.Lime;
                     mLog.WriteLog("CAM", "Guide Rectangle On");
 
@@ -3674,7 +3722,7 @@ namespace SKON_TabWelldingInspection
             }
             catch (System.Exception ex)
             {
-                mLog.WriteLog("System", $"error : {ex.Message}");
+                mLog.WriteLog("System", $"Guide Rectangle Error : {ex.Message}");
             }
         }
 
@@ -3685,21 +3733,41 @@ namespace SKON_TabWelldingInspection
             // 조명 밝기값 저장. ini에도 저장
             try
             {
+                // 251219 이전 저장 값 읽기
+                int oldLightCA = int.Parse(ini.ReadIniValue("CameraSetup", "Cathode_Light", "100"));
+                int oldLightAN = int.Parse(ini.ReadIniValue("CameraSetup", "Anode_Light", "100"));
+
                 if (int.Parse(tbxLightCA.Text) < 1) tbxLightCA.Text = "1";
                 if (int.Parse(tbxLightAN.Text) < 1) tbxLightAN.Text = "1";
                 if (int.Parse(tbxLightCA.Text) > lightMaxValue) tbxLightCA.Text = lightMaxValue.ToString();
                 if (int.Parse(tbxLightAN.Text) > lightMaxValue) tbxLightAN.Text = lightMaxValue.ToString();
+
+                int newLightCA = int.Parse(tbxLightCA.Text);
+                int newLightAN = int.Parse(tbxLightAN.Text);
+
+                // 251219 변경 로그
+                if (oldLightCA != newLightCA)
+                {
+                    mLog.WriteLog("Light", $"Cathode Light Changed : {oldLightCA} -> {newLightCA}");
+                }
+                if (oldLightAN != newLightAN)
+                {
+                    mLog.WriteLog("Light", $"Anode Light Changed : {oldLightAN} -> {newLightAN}");
+                }
+
+                lightControl.SetLightValue(tbxLightCA.Text, CAM_CATHODE);
+                lightControl.SetLightValue(tbxLightAN.Text, CAM_ANODE);
+
+                lightControl.SaveIniValue("Cathode_Light", tbxLightCA.Text);
+                lightControl.SaveIniValue("Anode_Light", tbxLightAN.Text);
+
+                ResetDirty();
+                MessageBox.Show("Light Controller Saved.", "Save");
             }
             catch (System.Exception ex)
             {
-                mLog.WriteLog("System", $"error : {ex.Message}");
+                mLog.WriteLog("System", $"Light Error : {ex.Message}");
             }
-
-            lightControl.SetLightValue(tbxLightCA.Text, CAM_CATHODE);
-            lightControl.SetLightValue(tbxLightAN.Text, CAM_ANODE);
-
-            lightControl.SaveIniValue("Cathode_Light", tbxLightCA.Text);
-            lightControl.SaveIniValue("Anode_Light", tbxLightAN.Text);
         }
 
         private void btnCaWbSave_Click(object sender, EventArgs e)
@@ -3745,7 +3813,7 @@ namespace SKON_TabWelldingInspection
             }
             catch (System.Exception ex)
             {
-                mLog.WriteLog("CAM", $"error : {ex.Message}");
+                mLog.WriteLog("CAM", $"Camera WB Setup Error : {ex.Message}");
             }
         }
 
@@ -3808,7 +3876,7 @@ namespace SKON_TabWelldingInspection
             }
             catch (System.Exception ex)
             {
-                mLog.WriteLog("CAM", $"error : {ex.Message}");
+                mLog.WriteLog("CAM", $"Camera Trigger Error : {ex.Message}");
             }
         }
 
@@ -3888,7 +3956,8 @@ namespace SKON_TabWelldingInspection
             }
             catch (System.Exception ex)
             {
-                mLog.WriteLog("System", $"error : {ex.Message}");
+                MessageBox.Show("Error : " + ex.ToString());
+                mLog.WriteLog("System", $"ExpGain Error : {ex.Message}");
             }
 
             SetCameraExposureGain(CAM_CATHODE, tbxExpCa.Text, tbxGainCa.Text);
@@ -3908,7 +3977,7 @@ namespace SKON_TabWelldingInspection
             catch (System.Exception ex)
             {
                 MessageBox.Show("Error : " + ex.ToString());
-                mLog.WriteLog("System", $"error : {ex.Message}");
+                mLog.WriteLog("System", $"Camera Setup Error : {ex.Message}");
             }
         }
 
@@ -3932,7 +4001,7 @@ namespace SKON_TabWelldingInspection
             lblContrastValAn.Text = mDisplay.ViewContrastValue(displayAnode.Display, brightPositionAN_x, brightPositionAN_y).ToString();
         }
 
-        private void btnSetBrightPosition_Click(object sender, EventArgs e)
+        private void btnSetBrightPosition_Click2(object sender, EventArgs e)
         {
             if (btnViewGuideRect.Text.Contains("On"))
             {
@@ -3940,11 +4009,58 @@ namespace SKON_TabWelldingInspection
                 brightPositionCA_y = mDisplay.GetRectY(displayCathode.Display);
                 brightPositionAN_x = mDisplay.GetRectX(displayAnode.Display);
                 brightPositionAN_y = mDisplay.GetRectY(displayAnode.Display);
-
+                
                 ini.WriteIniValue("CameraGuideLine", "brightPositionCA_x", brightPositionCA_x.ToString());
                 ini.WriteIniValue("CameraGuideLine", "brightPositionCA_y", brightPositionCA_y.ToString());
                 ini.WriteIniValue("CameraGuideLine", "brightPositionAN_x", brightPositionAN_x.ToString());
                 ini.WriteIniValue("CameraGuideLine", "brightPositionAN_y", brightPositionAN_y.ToString());
+            }
+        }
+
+        //251218 변경 로그 추가
+        private void btnSetBrightPosition_Click(object sender, EventArgs e)
+        {
+            if (!btnViewGuideRect.Text.Contains("On"))
+                return;
+            try
+            {
+                // 이전 메모리 값 계산
+                double oldBrightCa = mDisplay.ViewBrightValue(displayCathode.Display, brightPositionCA_x, brightPositionCA_y);
+
+                // 새 Guide Position 좌표 저장
+                int newCA_x = mDisplay.GetRectX(displayCathode.Display);
+                int newCA_y = mDisplay.GetRectY(displayCathode.Display);
+                int newAN_x = mDisplay.GetRectX(displayAnode.Display);
+                int newAN_y = mDisplay.GetRectY(displayAnode.Display);
+
+                // 새로운 값 계산
+                double newBrightCa = mDisplay.ViewBrightValue(displayCathode.Display, newCA_x, newCA_y);
+
+                // 변경 로그
+                if (Math.Abs(oldBrightCa - newBrightCa) > 0.0001)
+                {
+                    mLog.WriteLog("TEST", $"Guide Position Changed. Bright(CA) : {oldBrightCa} → {newBrightCa}");
+                }
+
+                // 메모리 값 갱신
+                brightPositionCA_x = newCA_x;
+                brightPositionCA_y = newCA_y;
+                brightPositionAN_x = newAN_x;
+                brightPositionAN_y = newAN_y;
+
+                // ini 저장
+                ini.WriteIniValue("CameraGuideLine", "brightPositionCA_x", newCA_x.ToString());
+                ini.WriteIniValue("CameraGuideLine", "brightPositionCA_y", newCA_y.ToString());
+                ini.WriteIniValue("CameraGuideLine", "brightPositionAN_x", newAN_x.ToString());
+                ini.WriteIniValue("CameraGuideLine", "brightPositionAN_y", newAN_y.ToString());
+
+                ResetDirty();
+
+                MessageBox.Show("Guide Position Saved.", "Save");
+            }
+            catch (System.Exception ex)
+            {
+                mLog.WriteLog("System", $"Set Guide Position Error : {ex.Message}");
             }
         }
 
@@ -4642,5 +4758,6 @@ namespace SKON_TabWelldingInspection
         {
             cls_File.OpenFolder(lbl_VproSavePath);
         }
+
     }
 }

@@ -276,6 +276,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Class\cls_Config.cs" />
     <Compile Include="Class\cls_detectAnomal.cs" />
     <Compile Include="Class\cls_Display.cs" />

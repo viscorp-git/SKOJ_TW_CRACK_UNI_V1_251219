@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace SKON_TabWelldingInspection
 {
-    public partial class frm_Inspection : MaterialForm
+    public partial class frm_Inspection : BaseConfigForm
     {
 
         private cls_Model mModel = null;
@@ -23,6 +23,10 @@ namespace SKON_TabWelldingInspection
             mModel = cls_GlobalValue.Model.DeepCopy();
             cogToolBlockEditV21_Cathode.Subject = mModel.CathodeToolBlock;
             cogToolBlockEditV21_Anode.Subject = mModel.AnodeToolBlock;
+
+            // Toolblock 변경 감지 이벤트 등록
+            cogToolBlockEditV21_Cathode.SubjectChanged += MarkDirty;
+            cogToolBlockEditV21_Anode.SubjectChanged += MarkDirty;
         }
 
         private void frm_Inspection_FormClosing(object sender, FormClosingEventArgs e)
@@ -37,6 +41,9 @@ namespace SKON_TabWelldingInspection
 
         private void btn_Save_Click(object sender, EventArgs e)
         {
+            if (!ConfirmSave())
+                return;
+
             string full_Path = cls_GlobalValue.ModelPath + "\\" + mModel.ModelNumber.ToString() + "_" + mModel.ModelName + ".mpp";
 
             mModel.CathodeToolBlock = cogToolBlockEditV21_Cathode.Subject;
@@ -47,6 +54,9 @@ namespace SKON_TabWelldingInspection
                 cls_GlobalValue.Model = mModel.DeepCopy();
                 cls_GlobalValue.ChangeToolblock_Anode = true;
                 cls_GlobalValue.ChangeToolblock_Cathode = true;
+
+                ResetDirty();   // 저장 완료 처리
+                MessageBox.Show("Model Save Success");
             }
             else
             {

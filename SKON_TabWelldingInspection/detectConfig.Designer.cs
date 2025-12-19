@@ -90,6 +90,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.btnConfigCancel = new System.Windows.Forms.Button();
             this.btnConfigSave = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -110,6 +111,7 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(865, 47);
             this.panel1.TabIndex = 0;
+            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
             // label1
             // 
@@ -970,12 +972,23 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.btnConfigCancel);
             this.panel2.Controls.Add(this.btnConfigSave);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 491);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(865, 41);
             this.panel2.TabIndex = 2;
+            // 
+            // btnConfigCancel
+            // 
+            this.btnConfigCancel.Location = new System.Drawing.Point(710, 0);
+            this.btnConfigCancel.Name = "btnConfigCancel";
+            this.btnConfigCancel.Size = new System.Drawing.Size(75, 41);
+            this.btnConfigCancel.TabIndex = 1;
+            this.btnConfigCancel.Text = "cancel";
+            this.btnConfigCancel.UseVisualStyleBackColor = true;
+            this.btnConfigCancel.Click += new System.EventHandler(this.btnConfigCancel_Click);
             // 
             // btnConfigSave
             // 
@@ -998,6 +1011,7 @@
             this.Controls.Add(this.panel1);
             this.Name = "detectConfig";
             this.Text = "detectConfig";
+            this.Load += new System.EventHandler(this.detectConfig_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
@@ -1084,5 +1098,6 @@
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Button btnConfigCancel;
     }
 }

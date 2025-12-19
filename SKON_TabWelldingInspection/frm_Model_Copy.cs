@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace SKON_TabWelldingInspection
 {
-    public partial class frm_Model_Copy : IDMAX_FrameWork.MaterialForm
+    public partial class frm_Model_Copy : BaseConfigForm
     {
         public cls_Model mModel;
         public string mModelModify;
@@ -31,10 +31,17 @@ namespace SKON_TabWelldingInspection
 
             num_ModelNumber.Value = mModel.ModelNumber;
             txt_ModelName.Text = mModel.ModelName;
+
+            // 변경 감지 이벤트 등록
+            num_ModelNumber.ValueChanged += MarkDirty;
+            txt_ModelName.TextChanged += MarkDirty;
         }
 
         private void btn_Save_Click(object sender, EventArgs e)
         {
+            if (!ConfirmSave())
+                return;
+
             string full_Path = cls_GlobalValue.ModelPath + "\\" + lb_ModelNumber_Value.Text + "_" + lb_ModelName_Value.Text + ".mpp";
             if (mModelModify == "Edit")
             {
@@ -68,6 +75,7 @@ namespace SKON_TabWelldingInspection
                 }
             }
 
+            ResetDirty();   // 저장 완료 처리
             this.Close();
         }
 
