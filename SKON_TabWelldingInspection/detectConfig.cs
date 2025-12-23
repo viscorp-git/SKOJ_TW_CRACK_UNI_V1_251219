@@ -22,6 +22,12 @@ namespace SKON_TabWelldingInspection
         public detectConfig(frm_Main main)
         {
             InitializeComponent();
+
+            this.FormBorderStyle = FormBorderStyle.Sizable;
+            this.ControlBox = true;
+            this.MinimizeBox = false;
+            this.MaximizeBox = false;
+            
             frmMain = main;
             loadConfigData();
         }
@@ -114,20 +120,18 @@ namespace SKON_TabWelldingInspection
 
         private void btnConfigCancel_Click(object sender, EventArgs e)
         {
-            if (_isDirty)
+            if (MessageBox.Show(
+                "Are you sure you want to discard the changes?",
+                "Cancel",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question) != DialogResult.Yes)
             {
-                if (MessageBox.Show(
-                    "변경사항을 취소하시겠습니까?",
-                    "Cancel",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question) != DialogResult.Yes)
-                {
-                    return;
-                }
+                return;
             }
 
             LoadConfigToUI(); // 원복
             ResetDirty();     // 변경 없음
+            this.Close();
         }
 
         private void btnConfigSave_Click(object sender, EventArgs e)
@@ -210,12 +214,13 @@ namespace SKON_TabWelldingInspection
                 frmMain.ini.WriteIniValue("Detect", "Sharp_AN_LOW_VAL", Convert.ToString(frmMain.mSharp_AN_LOW_VAL));
 
                 ResetDirty();
-                MessageBox.Show("저장되었습니다.", "Save");
+                MessageBox.Show("Settings have been saved.", "Save");
+                this.Close();
             }
             catch (Exception ex)
             {
                 frmMain.Log.WriteLog("ERR", $"detectConfig Save Error : {ex.Message}");
-                MessageBox.Show("저장 중 오류가 발생했습니다", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Failed to save the settings.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

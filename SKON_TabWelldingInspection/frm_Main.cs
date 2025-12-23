@@ -602,7 +602,7 @@ namespace SKON_TabWelldingInspection
         {
             // 저장 여부 확인
             DialogResult result = MessageBox.Show(
-                "저장하시겠습니까?",
+                "Would you like to save the changes?",
                 "Confirm",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question
@@ -692,7 +692,7 @@ namespace SKON_TabWelldingInspection
                 ini.WriteIniValue("VPRO", "ModelSavePath", cls_GlobalValue.ModelPath);
 
                 ResetDirty();
-                MessageBox.Show("저장되었습니다.", "Save");
+                MessageBox.Show("Settings have been saved.", "Save");
             }
             catch (System.Exception ex)
             {
@@ -3273,6 +3273,7 @@ namespace SKON_TabWelldingInspection
                     {
                         mbCathode_Connect = true;
                         AdvanDevice.OutputStart(mIO_OUT_CA_READY, true, 0, 0, 0);
+                        MessageBox.Show("Camera Connect Success");
                     }
                     else
                     {
@@ -3303,6 +3304,7 @@ namespace SKON_TabWelldingInspection
                     {
                         mbAndoe_Connect = true;
                         AdvanDevice.OutputStart(mIO_OUT_AN_READY, true, 0, 0, 0);
+                        MessageBox.Show("Camera Connect Success");
                     }
                     else
                     {
@@ -3884,6 +3886,7 @@ namespace SKON_TabWelldingInspection
                 tbxAnWbB.Text = valB;
             }
 
+            //mLog.WriteLog("TEST", $"White Balance(An) saved : R={valR}, G={valG}, B={valB}");
             mLog.WriteLog("CAM", $"{strP} White Balance Auto R : {valR}");
             mLog.WriteLog("CAM", $"{strP} White Balance Auto G : {valG}");
             mLog.WriteLog("CAM", $"{strP} White Balance Auto B : {valB}");
@@ -4108,19 +4111,19 @@ namespace SKON_TabWelldingInspection
                 // 변경 로그
                 if (Math.Abs(oldBrightCa - newBrightCa) > 0.0001)
                 {
-                    mLog.WriteLog("TEST", $"Guide Position Changed. Bright(CA) : {oldBrightCa} → {newBrightCa}");
+                    mLog.WriteLog("TEST", $"Guide Position Changed. Bright(CA) : {oldBrightCa:F6} → {newBrightCa:F6}");
                 }
                 if (Math.Abs(oldBrightAn - newBrightAn) > 0.0001)
                 {
-                    mLog.WriteLog("TEST", $"Guide Position Changed. Bright(AN) : {oldBrightAn} → {newBrightAn}");
+                    mLog.WriteLog("TEST", $"Guide Position Changed. Bright(AN) : {oldBrightAn:F6} → {newBrightAn:F6}");
                 }
                 if (Math.Abs(oldContrastCa - newContrastCa) > 0.0001)
                 {
-                    mLog.WriteLog("TEST", $"Guide Position Changed. Contrast(CA) : {oldContrastCa} → {newContrastCa}");
+                    mLog.WriteLog("TEST", $"Guide Position Changed. Contrast(CA) : {oldContrastCa:F6} → {newContrastCa:F6}");
                 }
                 if (Math.Abs(oldContrastAn - newContrastAn) > 0.0001)
                 {
-                    mLog.WriteLog("TEST", $"Guide Position Changed. Contrast(AN) : {oldContrastAn} → {newContrastAn}");
+                    mLog.WriteLog("TEST", $"Guide Position Changed. Contrast(AN) : {oldContrastAn:F6} → {newContrastAn:F6}");
                 }
 
                 // 메모리 값 갱신
