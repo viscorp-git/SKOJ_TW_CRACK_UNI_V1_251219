@@ -64,7 +64,9 @@ namespace SKON_TabWelldingInspection.Class
                 path = @"D:\LOG\VISION_ANM_LOG";
             else if (part == "ERR")
                 path = @"D:\LOG\VISION_ERR_LOG";
-            else 
+            else if (part == "TEST")    //test용 디렉토리
+                path = @"D:\LOG\VISION_TEST_LOG";
+            else
                 path = @"D:\LOG\VISION_SYS_LOG";
 
             //WriteLogFile(path, message);

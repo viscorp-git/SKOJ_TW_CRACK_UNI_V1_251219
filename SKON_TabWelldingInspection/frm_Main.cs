@@ -3748,11 +3748,11 @@ namespace SKON_TabWelldingInspection
                 // 251219 변경 로그
                 if (oldLightCA != newLightCA)
                 {
-                    mLog.WriteLog("Light", $"Cathode Light Changed : {oldLightCA} -> {newLightCA}");
+                    mLog.WriteLog("TEST", $"Cathode Light Changed : {oldLightCA} -> {newLightCA}");
                 }
                 if (oldLightAN != newLightAN)
                 {
-                    mLog.WriteLog("Light", $"Anode Light Changed : {oldLightAN} -> {newLightAN}");
+                    mLog.WriteLog("TEST", $"Anode Light Changed : {oldLightAN} -> {newLightAN}");
                 }
 
                 lightControl.SetLightValue(tbxLightCA.Text, CAM_CATHODE);
@@ -4001,19 +4001,19 @@ namespace SKON_TabWelldingInspection
                 // 251219 변경 로그
                 if (oldExpCa != newExpCa)
                 {
-                    mLog.WriteLog("CAM", $"Cathode Exposure Changed : {oldExpCa} -> {newExpCa}");
+                    mLog.WriteLog("TEST", $"Cathode Exposure Changed : {oldExpCa} -> {newExpCa}");
                 }
                 if (oldGainCa != newGainCa)
                 {
-                    mLog.WriteLog("CAM", $"Cathode Gain Changed : {oldGainCa} -> {newGainCa}");
+                    mLog.WriteLog("TEST", $"Cathode Gain Changed : {oldGainCa} -> {newGainCa}");
                 }
                 if (oldExpAn != newExpAn)
                 {
-                    mLog.WriteLog("CAM", $"Anode Exposure Changed : {oldExpAn} -> {newExpAn}");
+                    mLog.WriteLog("TEST", $"Anode Exposure Changed : {oldExpAn} -> {newExpAn}");
                 }
                 if (oldGainAn != newGainAn)
                 {
-                    mLog.WriteLog("CAM", $"Anode Gain Changed : {oldGainAn} -> {newGainAn}");
+                    mLog.WriteLog("TEST", $"Anode Gain Changed : {oldGainAn} -> {newGainAn}");
                 }
 
                 SetCameraExposureGain(CAM_CATHODE, tbxExpCa.Text, tbxGainCa.Text);
@@ -4089,6 +4089,9 @@ namespace SKON_TabWelldingInspection
             {
                 // 이전 메모리 값 계산
                 double oldBrightCa = mDisplay.ViewBrightValue(displayCathode.Display, brightPositionCA_x, brightPositionCA_y);
+                double oldBrightAn = mDisplay.ViewBrightValue(displayAnode.Display, brightPositionAN_x, brightPositionAN_y);
+                double oldContrastCa = mDisplay.ViewContrastValue(displayCathode.Display, brightPositionCA_x, brightPositionCA_y);
+                double oldContrastAn = mDisplay.ViewContrastValue(displayAnode.Display, brightPositionAN_x, brightPositionAN_y);
 
                 // 새 Guide Position 좌표 저장
                 int newCA_x = mDisplay.GetRectX(displayCathode.Display);
@@ -4098,11 +4101,26 @@ namespace SKON_TabWelldingInspection
 
                 // 새로운 값 계산
                 double newBrightCa = mDisplay.ViewBrightValue(displayCathode.Display, newCA_x, newCA_y);
+                double newBrightAn = mDisplay.ViewBrightValue(displayAnode.Display, newAN_x, newAN_y);
+                double newContrastCa = mDisplay.ViewContrastValue(displayCathode.Display, newCA_x, newCA_y);
+                double newContrastAn = mDisplay.ViewContrastValue(displayAnode.Display, newAN_x, newAN_y);
 
                 // 변경 로그
                 if (Math.Abs(oldBrightCa - newBrightCa) > 0.0001)
                 {
                     mLog.WriteLog("TEST", $"Guide Position Changed. Bright(CA) : {oldBrightCa} → {newBrightCa}");
+                }
+                if (Math.Abs(oldBrightAn - newBrightAn) > 0.0001)
+                {
+                    mLog.WriteLog("TEST", $"Guide Position Changed. Bright(AN) : {oldBrightAn} → {newBrightAn}");
+                }
+                if (Math.Abs(oldContrastCa - newContrastCa) > 0.0001)
+                {
+                    mLog.WriteLog("TEST", $"Guide Position Changed. Contrast(CA) : {oldContrastCa} → {newContrastCa}");
+                }
+                if (Math.Abs(oldContrastAn - newContrastAn) > 0.0001)
+                {
+                    mLog.WriteLog("TEST", $"Guide Position Changed. Contrast(AN) : {oldContrastAn} → {newContrastAn}");
                 }
 
                 // 메모리 값 갱신
@@ -4650,7 +4668,7 @@ namespace SKON_TabWelldingInspection
             if (result == DialogResult.Cancel)
                 return;
 
-            mLog.WriteLog("TEST", $"Model chage requested by user. Old Model: {mWorkSpacePath}, New Model: {lbl_WorkspacePath.Text}");
+            mLog.WriteLog("TEST", $"Model change requested by user. Old Model: {mWorkSpacePath}, New Model: {lbl_WorkspacePath.Text}");
 
             ModelChangeProcess(Path.GetDirectoryName(lbl_WorkspacePath.Text), Path.GetFileName(lbl_WorkspacePath.Text));
         }

@@ -184,8 +184,6 @@
             this.label53 = new System.Windows.Forms.Label();
             this.txt_CathodeVision_IP = new System.Windows.Forms.TextBox();
             this.txt_AnodeVision_IP = new System.Windows.Forms.TextBox();
-            this.btn_Anode_Connect = new System.Windows.Forms.Button();
-            this.btn_Cathode_Connect = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.rdoCamRevCaTrue = new System.Windows.Forms.RadioButton();
             this.rdoCamRevCaFalse = new System.Windows.Forms.RadioButton();
@@ -269,6 +267,8 @@
             this.label18 = new System.Windows.Forms.Label();
             this.lbl_VproSavePath = new System.Windows.Forms.Label();
             this.btn_VproSavePath = new System.Windows.Forms.Button();
+            this.btn_Anode_Connect = new System.Windows.Forms.Button();
+            this.btn_Cathode_Connect = new System.Windows.Forms.Button();
             this.btn_SaveMaintenance = new System.Windows.Forms.Button();
             this.tabIO = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -2986,34 +2986,6 @@
             this.txt_AnodeVision_IP.Text = "127.0.0.1";
             this.txt_AnodeVision_IP.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // btn_Anode_Connect
-            // 
-            this.btn_Anode_Connect.BackColor = System.Drawing.Color.Lime;
-            this.btn_Anode_Connect.Enabled = false;
-            this.btn_Anode_Connect.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold);
-            this.btn_Anode_Connect.ForeColor = System.Drawing.Color.Black;
-            this.btn_Anode_Connect.Location = new System.Drawing.Point(1293, 33);
-            this.btn_Anode_Connect.Name = "btn_Anode_Connect";
-            this.btn_Anode_Connect.Size = new System.Drawing.Size(224, 24);
-            this.btn_Anode_Connect.TabIndex = 109;
-            this.btn_Anode_Connect.Text = "Connect";
-            this.btn_Anode_Connect.UseVisualStyleBackColor = false;
-            this.btn_Anode_Connect.Click += new System.EventHandler(this.btn_Anode_Connect_Click);
-            // 
-            // btn_Cathode_Connect
-            // 
-            this.btn_Cathode_Connect.BackColor = System.Drawing.Color.Lime;
-            this.btn_Cathode_Connect.Enabled = false;
-            this.btn_Cathode_Connect.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold);
-            this.btn_Cathode_Connect.ForeColor = System.Drawing.Color.Black;
-            this.btn_Cathode_Connect.Location = new System.Drawing.Point(1293, 3);
-            this.btn_Cathode_Connect.Name = "btn_Cathode_Connect";
-            this.btn_Cathode_Connect.Size = new System.Drawing.Size(224, 24);
-            this.btn_Cathode_Connect.TabIndex = 107;
-            this.btn_Cathode_Connect.Text = "Connect";
-            this.btn_Cathode_Connect.UseVisualStyleBackColor = false;
-            this.btn_Cathode_Connect.Click += new System.EventHandler(this.btn_Cathode_Connect_Click);
-            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 2;
@@ -4148,6 +4120,34 @@
             this.btn_VproSavePath.Text = "....";
             this.btn_VproSavePath.UseVisualStyleBackColor = false;
             this.btn_VproSavePath.Click += new System.EventHandler(this.btn_VproSavePath_Click);
+            // 
+            // btn_Anode_Connect
+            // 
+            this.btn_Anode_Connect.BackColor = System.Drawing.Color.Lime;
+            this.btn_Anode_Connect.Enabled = false;
+            this.btn_Anode_Connect.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold);
+            this.btn_Anode_Connect.ForeColor = System.Drawing.Color.Black;
+            this.btn_Anode_Connect.Location = new System.Drawing.Point(1293, 33);
+            this.btn_Anode_Connect.Name = "btn_Anode_Connect";
+            this.btn_Anode_Connect.Size = new System.Drawing.Size(224, 24);
+            this.btn_Anode_Connect.TabIndex = 109;
+            this.btn_Anode_Connect.Text = "Connect";
+            this.btn_Anode_Connect.UseVisualStyleBackColor = false;
+            this.btn_Anode_Connect.Click += new System.EventHandler(this.btn_Anode_Connect_Click);
+            // 
+            // btn_Cathode_Connect
+            // 
+            this.btn_Cathode_Connect.BackColor = System.Drawing.Color.Lime;
+            this.btn_Cathode_Connect.Enabled = false;
+            this.btn_Cathode_Connect.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold);
+            this.btn_Cathode_Connect.ForeColor = System.Drawing.Color.Black;
+            this.btn_Cathode_Connect.Location = new System.Drawing.Point(1293, 3);
+            this.btn_Cathode_Connect.Name = "btn_Cathode_Connect";
+            this.btn_Cathode_Connect.Size = new System.Drawing.Size(224, 24);
+            this.btn_Cathode_Connect.TabIndex = 107;
+            this.btn_Cathode_Connect.Text = "Connect";
+            this.btn_Cathode_Connect.UseVisualStyleBackColor = false;
+            this.btn_Cathode_Connect.Click += new System.EventHandler(this.btn_Cathode_Connect_Click);
             // 
             // btn_SaveMaintenance
             // 
