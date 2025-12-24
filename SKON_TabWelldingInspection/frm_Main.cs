@@ -3245,6 +3245,7 @@ namespace SKON_TabWelldingInspection
         {
             PolarityGrabEvent(bimage, CAM_ANODE);
         }
+        // 251224 카메라 연결 버튼 활성화
         private void txt_CathodeVision_IP_TextChanged(object sender, EventArgs e)
         {
             btn_Cathode_Connect.Enabled = !string.IsNullOrWhiteSpace(txt_CathodeVision_IP.Text);
@@ -3255,17 +3256,14 @@ namespace SKON_TabWelldingInspection
             btn_Anode_Connect.Enabled = !string.IsNullOrWhiteSpace(txt_AnodeVision_IP.Text);
             btn_Anode_Connect.BackColor = System.Drawing.Color.Lime;
         }
-
-
-        private void btn_Anode_Connect_Click(object sender, EventArgs e)
-        {
-            ConnectPolarity(CAM_ANODE);
-        }
-
         private void btn_Cathode_Connect_Click(object sender, EventArgs e)
         {
             ConnectPolarity(CAM_CATHODE);
             mLog.WriteLog("TEST", "Cathode Camera Connect Clicked");    // 연결 확인용
+        }
+        private void btn_Anode_Connect_Click(object sender, EventArgs e)
+        {
+            ConnectPolarity(CAM_ANODE);
         }
 
         private void ConnectPolarity(int camIndex)
@@ -4095,12 +4093,6 @@ namespace SKON_TabWelldingInspection
                 return;
             try
             {
-                // 이전 메모리 값 계산
-                double oldBrightCa = mDisplay.ViewBrightValue(displayCathode.Display, brightPositionCA_x, brightPositionCA_y);
-                double oldBrightAn = mDisplay.ViewBrightValue(displayAnode.Display, brightPositionAN_x, brightPositionAN_y);
-                double oldContrastCa = mDisplay.ViewContrastValue(displayCathode.Display, brightPositionCA_x, brightPositionCA_y);
-                double oldContrastAn = mDisplay.ViewContrastValue(displayAnode.Display, brightPositionAN_x, brightPositionAN_y);
-
                 // 새 Guide Position 좌표 저장
                 int newCA_x = mDisplay.GetRectX(displayCathode.Display);
                 int newCA_y = mDisplay.GetRectY(displayCathode.Display);
@@ -4108,28 +4100,14 @@ namespace SKON_TabWelldingInspection
                 int newAN_y = mDisplay.GetRectY(displayAnode.Display);
 
                 // 새로운 값 계산
-                double newBrightCa = mDisplay.ViewBrightValue(displayCathode.Display, newCA_x, newCA_y);
-                double newBrightAn = mDisplay.ViewBrightValue(displayAnode.Display, newAN_x, newAN_y);
-                double newContrastCa = mDisplay.ViewContrastValue(displayCathode.Display, newCA_x, newCA_y);
-                double newContrastAn = mDisplay.ViewContrastValue(displayAnode.Display, newAN_x, newAN_y);
+                double brightCa = mDisplay.ViewBrightValue(displayCathode.Display, newCA_x, newCA_y);
+                double brightAn = mDisplay.ViewBrightValue(displayAnode.Display, newAN_x, newAN_y);
+                double contrastCa = mDisplay.ViewContrastValue(displayCathode.Display, newCA_x, newCA_y);
+                double contrastAn = mDisplay.ViewContrastValue(displayAnode.Display, newAN_x, newAN_y);
 
                 // 변경 로그
-                if (Math.Abs(oldBrightCa - newBrightCa) > 0.0001)
-                {
-                    mLog.WriteLog("TEST", $"Guide Position Changed. Bright(CA) : {oldBrightCa:F6} → {newBrightCa:F6}");
-                }
-                if (Math.Abs(oldBrightAn - newBrightAn) > 0.0001)
-                {
-                    mLog.WriteLog("TEST", $"Guide Position Changed. Bright(AN) : {oldBrightAn:F6} → {newBrightAn:F6}");
-                }
-                if (Math.Abs(oldContrastCa - newContrastCa) > 0.0001)
-                {
-                    mLog.WriteLog("TEST", $"Guide Position Changed. Contrast(CA) : {oldContrastCa:F6} → {newContrastCa:F6}");
-                }
-                if (Math.Abs(oldContrastAn - newContrastAn) > 0.0001)
-                {
-                    mLog.WriteLog("TEST", $"Guide Position Changed. Contrast(AN) : {oldContrastAn:F6} → {newContrastAn:F6}");
-                }
+                mLog.WriteLog("TEST", $"Guide Position Changed. Bright(CA) : {brightCa:F6} | Contrast(CA) : {contrastCa:F6}");
+                mLog.WriteLog("TEST", $"Guide Position Changed. Bright(AN) : {brightAn:F6} | Contrast(AN) : {contrastAn:F6}");
 
                 // 메모리 값 갱신
                 brightPositionCA_x = newCA_x;
