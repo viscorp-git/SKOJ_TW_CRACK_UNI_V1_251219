@@ -3266,10 +3266,11 @@ namespace SKON_TabWelldingInspection
             ConnectPolarity(CAM_ANODE);
         }
 
-        private void ConnectPolarity(int camIndex)
+        private void ConnectPolarity2(int camIndex)
         {
             if (camIndex == CAM_CATHODE)
             {
+                // connect
                 if (btn_Cathode_Connect.Text == "Connect")
                 {
                     if (Cathode_Vision_Init(txt_CathodeVision_IP.Text))
@@ -3285,11 +3286,12 @@ namespace SKON_TabWelldingInspection
                         MessageBox.Show("Camera Connect Fail");
                     }
                 }
+                // disconnect
                 else
                 {
                     mCamera.Disconnect(CAM_CATHODE);
                     mbCathode_Connect = false;
-                    btn_Cathode_Connect.Text = "Disconnect";
+                    btn_Cathode_Connect.Text = "Disonnect";
                     btn_Cathode_Connect.BackColor = Color.LightGray;
 
                     btnCathodeLive.Text = "Cathode Live Off";
@@ -3297,6 +3299,89 @@ namespace SKON_TabWelldingInspection
                     mbCathode_Live = false;
 
                     btnCathodeLive.Enabled = false;
+                }
+            }
+            else if (camIndex == CAM_ANODE)
+            {
+                if (btn_Anode_Connect.Text == "Connect")
+                {
+                    if (Anode_Vision_Init(txt_AnodeVision_IP.Text))
+                    {
+                        mbAndoe_Connect = true;
+                        AdvanDevice.OutputStart(mIO_OUT_AN_READY, true, 0, 0, 0);
+                        MessageBox.Show("Camera Connect Success");
+                    }
+                    else
+                    {
+                        mbAndoe_Connect = false;
+                        AdvanDevice.OutputStart(mIO_OUT_AN_READY, false, 0, 0, 0);
+                        MessageBox.Show("Camera Connect Fail");
+                    }
+                }
+                else
+                {
+                    mCamera.Disconnect(CAM_ANODE);
+                    mbAndoe_Connect = false;
+                    btn_Anode_Connect.Text = "Disconnect";
+                    btn_Anode_Connect.BackColor = Color.LightGray;
+
+                    btnAnodeLive.Text = "Anode Live Off";
+                    btnAnodeLive.BackColor = Color.LightGray;
+                    mbAnode_Live = false;
+
+                    btnAnodeLive.Enabled = false;
+                }
+            }
+        }
+
+        private void ConnectPolarity(int camIndex)
+        {
+            if (camIndex == CAM_CATHODE)
+            {
+                // ===============================
+                // CONNECT
+                // ===============================
+                if (!mbCathode_Connect)
+                {
+                    if (Cathode_Vision_Init(txt_CathodeVision_IP.Text))
+                    {
+                        mbCathode_Connect = true;
+                        AdvanDevice.OutputStart(mIO_OUT_CA_READY, true, 0, 0, 0);
+
+                        // UI 상태
+                        btn_Cathode_Connect.Text = "Disconnect";
+                        btn_Cathode_Connect.BackColor = Color.LightGray;
+
+                        btnCathodeLive.Enabled = true;
+
+                        MessageBox.Show("Camera Connect Success");
+                    }
+                    else
+                    {
+                        mbCathode_Connect = false;
+                        AdvanDevice.OutputStart(mIO_OUT_CA_READY, false, 0, 0, 0);
+
+                        MessageBox.Show("Camera Connect Fail");
+                    }
+                }
+                // ===============================
+                // DISCONNECT
+                // ===============================
+                else
+                {
+                    mCamera.Disconnect(CAM_CATHODE);
+                    mbCathode_Connect = false;
+
+                    // UI 복구
+                    btn_Cathode_Connect.Text = "Connect";
+                    btn_Cathode_Connect.BackColor = Color.Lime;
+
+                    btnCathodeLive.Text = "Cathode Live Off";
+                    btnCathodeLive.BackColor = Color.LightGray;
+                    btnCathodeLive.Enabled = false;
+                    mbCathode_Live = false;
+
+                    MessageBox.Show("Camera Disconnected");
                 }
             }
             else if (camIndex == CAM_ANODE)
@@ -4086,7 +4171,7 @@ namespace SKON_TabWelldingInspection
             }
         }
 
-        //251218 변경 로그 추가
+        //251218 로그 추가
         private void btnSetBrightPosition_Click(object sender, EventArgs e)
         {
             if (!btnViewGuideRect.Text.Contains("On"))
