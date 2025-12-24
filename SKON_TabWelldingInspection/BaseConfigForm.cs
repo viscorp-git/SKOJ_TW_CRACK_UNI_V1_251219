@@ -45,7 +45,7 @@ namespace SKON_TabWelldingInspection
         protected bool ConfirmSave()
         {
             return MessageBox.Show(
-                "저장하시겠습니까?",
+                "Would you like to save the changes?",
                 "Confirm",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question

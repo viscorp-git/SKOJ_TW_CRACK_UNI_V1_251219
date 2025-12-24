@@ -210,18 +210,19 @@ namespace SKON_TabWelldingInspection
                 int newBrightRankQty = Convert.ToInt32(txtRankQty.Text);
 
                 // 251224 변경 로그 기록
-                // Bright
                 LogIfChanged("Brightness Bypass Info", _orgBrightDetYN, newBrightDetYN);
-                LogIfChanged("Brightness THRD Info", _orgBrightDetCnt, newBrightDetCnt);
                 LogIfChanged("Sharpness Bypass Info", _orgSharpDetYN, newSharpDetYN);
-                LogIfChanged("Sharpness THRD Info", _orgSharpDetCnt, newSharpDetCnt);
                 LogIfChanged("Location Bypass Info", _orgLocationDetYN, newLocationDetYN);
-                LogIfChanged("Location THRD Info", _orgLocationDetCnt,newLocationDetCnt);
                 LogIfChanged("NG Bypass Info", _orgNGDetYN, newNGDetYN);
-                LogIfChanged("NG THRD Info", _orgNGDetCnt, newNGDetCnt);
                 LogIfChanged("NG Interval Bypass Info", _orgNGITVDetYN, newNGITVDetYN);
-                LogIfChanged("NG Interval THRD Info", _orgNGDetCnt, newNGITVDetCnt);
-                LogIfChanged("NG Interval MAX THRD Info", _orgNGITVMaxCnt, newNGITVMaxCnt);
+
+                LogIfChanged("Brightness THRD Count Info", _orgBrightDetCnt, newBrightDetCnt);
+                LogIfChanged("Sharpness THRD Count Info", _orgSharpDetCnt, newSharpDetCnt);
+                LogIfChanged("Location THRD Count Info", _orgLocationDetCnt,newLocationDetCnt);
+                LogIfChanged("NG THRD Count Info", _orgNGDetCnt, newNGDetCnt);
+                LogIfChanged("NG Interval THRD Count Info", _orgNGDetCnt, newNGITVDetCnt);
+                LogIfChanged("NG Interval THRD Coutn(Max) Info", _orgNGITVMaxCnt, newNGITVMaxCnt);
+                
                 LogIfChanged("Analze Log Use Info", _orgLogDetYN, newLogDetYN);
                 LogIfChanged("Brightness Rank Qty Info", _orgBrightRankQty, newBrightRankQty);
 

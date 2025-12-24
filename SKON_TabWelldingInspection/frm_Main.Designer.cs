@@ -2974,6 +2974,7 @@
             this.txt_CathodeVision_IP.TabIndex = 81;
             this.txt_CathodeVision_IP.Text = "127.0.0.1";
             this.txt_CathodeVision_IP.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txt_CathodeVision_IP.TextChanged += new System.EventHandler(this.txt_CathodeVision_IP_TextChanged);
             // 
             // txt_AnodeVision_IP
             // 
@@ -2985,6 +2986,7 @@
             this.txt_AnodeVision_IP.TabIndex = 79;
             this.txt_AnodeVision_IP.Text = "127.0.0.1";
             this.txt_AnodeVision_IP.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txt_AnodeVision_IP.TextChanged += new System.EventHandler(this.txt_AnodeVision_IP_TextChanged);
             // 
             // tableLayoutPanel1
             // 
@@ -4123,7 +4125,7 @@
             // 
             // btn_Anode_Connect
             // 
-            this.btn_Anode_Connect.BackColor = System.Drawing.Color.Lime;
+            this.btn_Anode_Connect.BackColor = System.Drawing.Color.Silver;
             this.btn_Anode_Connect.Enabled = false;
             this.btn_Anode_Connect.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold);
             this.btn_Anode_Connect.ForeColor = System.Drawing.Color.Black;
@@ -4137,7 +4139,7 @@
             // 
             // btn_Cathode_Connect
             // 
-            this.btn_Cathode_Connect.BackColor = System.Drawing.Color.Lime;
+            this.btn_Cathode_Connect.BackColor = System.Drawing.Color.Silver;
             this.btn_Cathode_Connect.Enabled = false;
             this.btn_Cathode_Connect.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold);
             this.btn_Cathode_Connect.ForeColor = System.Drawing.Color.Black;

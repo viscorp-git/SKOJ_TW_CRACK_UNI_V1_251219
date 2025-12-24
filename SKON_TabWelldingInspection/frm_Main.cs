@@ -601,14 +601,7 @@ namespace SKON_TabWelldingInspection
         private void btn_Maintenance_Click(object sender, EventArgs e)
         {
             // 저장 여부 확인
-            DialogResult result = MessageBox.Show(
-                "Would you like to save the changes?",
-                "Confirm",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question
-            );
-
-            if (result != DialogResult.Yes)
+            if (!ConfirmSave())
                 return;
 
             try
@@ -3252,6 +3245,17 @@ namespace SKON_TabWelldingInspection
         {
             PolarityGrabEvent(bimage, CAM_ANODE);
         }
+        private void txt_CathodeVision_IP_TextChanged(object sender, EventArgs e)
+        {
+            btn_Cathode_Connect.Enabled = !string.IsNullOrWhiteSpace(txt_CathodeVision_IP.Text);
+            btn_Cathode_Connect.BackColor = System.Drawing.Color.Lime;
+        }
+        private void txt_AnodeVision_IP_TextChanged(object sender, EventArgs e)
+        {
+            btn_Anode_Connect.Enabled = !string.IsNullOrWhiteSpace(txt_AnodeVision_IP.Text);
+            btn_Anode_Connect.BackColor = System.Drawing.Color.Lime;
+        }
+
 
         private void btn_Anode_Connect_Click(object sender, EventArgs e)
         {
@@ -4850,5 +4854,6 @@ namespace SKON_TabWelldingInspection
             cls_File.OpenFolder(lbl_VproSavePath);
         }
 
+        
     }
 }
