@@ -3261,6 +3261,7 @@ namespace SKON_TabWelldingInspection
         private void btn_Cathode_Connect_Click(object sender, EventArgs e)
         {
             ConnectPolarity(CAM_CATHODE);
+            mLog.WriteLog("TEST", "Cathode Camera Connect Clicked");    // 연결 확인용
         }
 
         private void ConnectPolarity(int camIndex)

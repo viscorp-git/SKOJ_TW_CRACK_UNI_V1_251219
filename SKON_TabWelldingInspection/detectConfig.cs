@@ -18,7 +18,29 @@ namespace SKON_TabWelldingInspection
         //변경 로그용 원본 값 저장 변수(일단 BRG만)
         private bool _orgBrightDetYN;
         private int _orgBrightDetCnt;
-        
+        private bool _orgSharpDetYN;
+        private int _orgSharpDetCnt;
+        private bool _orgLocationDetYN;
+        private int _orgLocationDetCnt;
+        private bool _orgNGDetYN;
+        private int _orgNGDetCnt;
+        private bool _orgNGITVDetYN;
+        private int _orgNGITVDetCnt;
+        private int _orgNGITVMaxCnt;
+        private bool _orgLogDetYN;
+        private int _orgBrightRankQty;
+
+        private double _orgBrightCaStd;
+        private double _orgBrightCaLow;
+        private double _orgBrightCaUpp;
+        private double _orgSharpCaStd;
+        private double _orgSharpCaLow;
+        private double _orgBrightAnStd;
+        private double _orgBrightAnLow;
+        private double _orgBrightAnUpp;
+        private double _orgSharpAnStd;
+        private double _orgSharpAnLow;
+
         public detectConfig(frm_Main main)
         {
             InitializeComponent();
@@ -83,6 +105,28 @@ namespace SKON_TabWelldingInspection
             // 원본 값 저장
             _orgBrightDetYN = frmMain.mBright_Det_YN;
             _orgBrightDetCnt = frmMain.mBright_Det_CNT;
+            _orgSharpDetYN = frmMain.mSharp_Det_YN;
+            _orgSharpDetCnt = frmMain.mSharp_Det_CNT;
+            _orgLocationDetYN = frmMain.mLocation_Det_YN;
+            _orgLocationDetCnt = frmMain.mLocation_Det_CNT;
+            _orgNGDetYN = frmMain.mNG_Det_YN;
+            _orgNGDetCnt = frmMain.mNG_Det_CNT;
+            _orgNGITVDetYN = frmMain.mNG_ITV_Det_YN;
+            _orgNGITVDetCnt = frmMain.mNG_ITV_Det_CNT;
+            _orgNGITVMaxCnt = frmMain.mNG_ITV_Det_MAX_CNT;
+            _orgLogDetYN = frmMain.mLog_Det_YN;
+            _orgBrightRankQty = frmMain.mBright_Rank_Qty;
+
+            _orgBrightCaStd = frmMain.mBright_CA_STD_VAL;
+            _orgBrightCaLow = frmMain.mBright_CA_LOW_VAL;
+            _orgBrightCaUpp = frmMain.mBright_CA_UPP_VAL;
+            _orgSharpCaStd = frmMain.mSharp_CA_STD_VAL;
+            _orgSharpCaLow = frmMain.mSharp_CA_LOW_VAL;
+            _orgBrightAnStd = frmMain.mBright_AN_STD_VAL;
+            _orgBrightAnLow = frmMain.mBright_AN_LOW_VAL;
+            _orgBrightAnUpp = frmMain.mBright_AN_UPP_VAL;
+            _orgSharpAnStd = frmMain.mSharp_AN_STD_VAL;
+            _orgSharpAnLow = frmMain.mSharp_AN_LOW_VAL;
 
             // RadioButton (bool)
             rdoBTrue.Checked = frmMain.mBright_Det_YN;
@@ -118,6 +162,14 @@ namespace SKON_TabWelldingInspection
         {
         }
 
+        private void LogIfChanged<T>(string paramName, T originalValue, T newValue)
+        {
+            if (!EqualityComparer<T>.Default.Equals(originalValue, newValue))
+            {
+                frmMain.Log.WriteLog("TEST", $"[Detect Anomal] {paramName} changed : {originalValue} -> {newValue}");
+            }
+        }
+
         private void btnConfigCancel_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show(
@@ -142,19 +194,58 @@ namespace SKON_TabWelldingInspection
 
             try
             {
-                // 로그 비교용 UI 값 임시 저장(일단 brg만)
+                // 로그 비교용 UI 값 임시 저장
                 bool newBrightDetYN = rdoBTrue.Checked;
                 int newBrightDetCnt = Convert.ToInt32(txtTHRD_B_Cnt.Text);
+                bool newSharpDetYN = rdoSTrue.Checked;
+                int newSharpDetCnt = Convert.ToInt32(txtTHRD_S_Cnt.Text);
+                bool newLocationDetYN = rdoLTrue.Checked;
+                int newLocationDetCnt = Convert.ToInt32(txtTHRD_L_Cnt.Text);
+                bool newNGDetYN = rdoNGTrue.Checked;
+                int newNGDetCnt = Convert.ToInt32(txtTHRD_NG_Cnt.Text);
+                bool newNGITVDetYN = rdoNGITVTrue.Checked;
+                int newNGITVDetCnt = Convert.ToInt32(txtTHRD_NGITV_Cnt.Text);
+                int newNGITVMaxCnt = Convert.ToInt32(txtTHRD_NGITV_MAX_CNT.Text);
+                bool newLogDetYN = rdoALTrue.Checked;
+                int newBrightRankQty = Convert.ToInt32(txtRankQty.Text);
 
-                // 어노말리 변경 로그
-                if (_orgBrightDetYN != newBrightDetYN)
-                {
-                    frmMain.Log.WriteLog("TEST", $"[Detect Anomal] Brightness Bypass Info changed : {_orgBrightDetYN} -> {newBrightDetYN}");
-                }
-                if (_orgBrightDetCnt != newBrightDetCnt)
-                {
-                    frmMain.Log.WriteLog("TEST", $"[Detect Anomal] Brightness THRD Info changed : {_orgBrightDetCnt} -> {newBrightDetCnt}");
-                }
+                // 251224 변경 로그 기록
+                // Bright
+                LogIfChanged("Brightness Bypass Info", _orgBrightDetYN, newBrightDetYN);
+                LogIfChanged("Brightness THRD Info", _orgBrightDetCnt, newBrightDetCnt);
+                LogIfChanged("Sharpness Bypass Info", _orgSharpDetYN, newSharpDetYN);
+                LogIfChanged("Sharpness THRD Info", _orgSharpDetCnt, newSharpDetCnt);
+                LogIfChanged("Location Bypass Info", _orgLocationDetYN, newLocationDetYN);
+                LogIfChanged("Location THRD Info", _orgLocationDetCnt,newLocationDetCnt);
+                LogIfChanged("NG Bypass Info", _orgNGDetYN, newNGDetYN);
+                LogIfChanged("NG THRD Info", _orgNGDetCnt, newNGDetCnt);
+                LogIfChanged("NG Interval Bypass Info", _orgNGITVDetYN, newNGITVDetYN);
+                LogIfChanged("NG Interval THRD Info", _orgNGDetCnt, newNGITVDetCnt);
+                LogIfChanged("NG Interval MAX THRD Info", _orgNGITVMaxCnt, newNGITVMaxCnt);
+                LogIfChanged("Analze Log Use Info", _orgLogDetYN, newLogDetYN);
+                LogIfChanged("Brightness Rank Qty Info", _orgBrightRankQty, newBrightRankQty);
+
+                double newBrightCaStd = Convert.ToDouble(txtB_CA_STD_VAL.Text);
+                double newBrightCaLow = Convert.ToDouble(txtB_CA_LOW_VAL.Text);
+                double newBrightCaUpp = Convert.ToDouble(txtB_CA_UPP_VAL.Text);
+                double newSharpCaStd = Convert.ToDouble(txtS_CA_STD_VAL.Text);
+                double newSharpCaLow = Convert.ToDouble(txtS_CA_LOW_VAL.Text);
+                double newBrightAnStd = Convert.ToDouble(txtB_AN_STD_VAL.Text);
+                double newBrightAnLow = Convert.ToDouble(txtB_AN_LOW_VAL.Text);
+                double newBrightAnUpp = Convert.ToDouble(txtB_AN_UPP_VAL.Text);
+                double newSharpAnStd = Convert.ToDouble(txtS_AN_STD_VAL.Text);
+                double newSharpAnLow = Convert.ToDouble(txtS_AN_LOW_VAL.Text);
+                
+                LogIfChanged("Brightness CA STD Value", (int)_orgBrightCaStd, (int)newBrightCaStd);
+                LogIfChanged("Brightness CA LOW Value", (int)_orgBrightCaLow, (int)newBrightCaLow);
+                LogIfChanged("Brightness CA UPP Value", (int)_orgBrightCaUpp, (int)newBrightCaUpp);
+                LogIfChanged("Sharpness CA STD Value", (int)_orgSharpCaStd, (int)newSharpCaStd);
+                LogIfChanged("Sharpness CA LOW Value", (int)_orgSharpCaLow, (int)newSharpCaLow);
+                LogIfChanged("Brightness AN STD Value", (int)_orgBrightAnStd, (int)newBrightAnStd);
+                LogIfChanged("Brightness AN LOW Value", (int)_orgBrightAnLow, (int)newBrightAnLow);
+                LogIfChanged("Brightness AN UPP Value", (int)_orgBrightAnUpp, (int)newBrightAnUpp);
+                LogIfChanged("Sharpness AN STD Value", (int)_orgSharpAnStd, (int)newSharpAnStd);
+                LogIfChanged("Sharpness AN LOW Value", (int)_orgSharpAnLow, (int)newSharpAnLow);
 
                 // 실제 메모리 값에 저장
                 frmMain.mBright_Det_YN = newBrightDetYN;
